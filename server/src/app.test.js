@@ -7,7 +7,7 @@ import { createDatabase } from "./db.js";
 function testApp() {
   process.env.ADMIN_USERNAME = "admin";
   process.env.ADMIN_PASSWORD = "secret123";
-  process.env.JWT_SECRET = "test-secret";
+  process.env.JWT_SECRET = "test-secret-for-litian";
   const db = createDatabase(":memory:");
   return createApp({ db });
 }

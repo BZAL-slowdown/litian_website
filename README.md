@@ -28,7 +28,7 @@ API 地址：`http://localhost:4000/api`
 
 1. 在服务器上配置 `.env`，至少修改 `JWT_SECRET`、`ADMIN_USERNAME`、`ADMIN_PASSWORD`。
 2. 执行 `npm install && npm run build`。
-3. 用 `npm start` 启动后端。
+3. 执行 `npm run build` 生成 `client/dist`，再用 `npm start` 启动后端。
 4. Nginx 将 `litian.zbhaowen.top` 指向后端端口，后端会托管前端 `client/dist`。
 
 ## GitHub

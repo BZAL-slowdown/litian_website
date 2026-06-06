@@ -7,13 +7,14 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import morgan from "morgan";
 import { z } from "zod";
+import { loadConfig } from "./config.js";
 import { createDatabase, migrate, seed, serializePage } from "./db.js";
 
 dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const now = () => new Date().toISOString();
-const jwtSecret = () => process.env.JWT_SECRET || "dev-secret-change-me";
+const jwtSecret = () => loadConfig().JWT_SECRET;
 
 const pageSchema = z.object({
   title: z.string().min(1),
@@ -56,12 +57,18 @@ function requireAuth(roles = ["admin"]) {
 
 export function createApp(options = {}) {
   const app = express();
-  const db = options.db || createDatabase(process.env.DATABASE_PATH || "./data/litian.sqlite");
+  const config = loadConfig();
+  const db = options.db || createDatabase(config.DATABASE_PATH);
   migrate(db);
-  seed(db);
+  seed(db, config);
 
   app.locals.db = db;
-  app.use(cors());
+  app.use(cors({
+    origin(origin, callback) {
+      if (!origin || origin === config.PUBLIC_SITE_URL || origin.startsWith("http://localhost:")) return callback(null, true);
+      return callback(new Error("CORS origin not allowed"));
+    }
+  }));
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("dev"));
 
@@ -153,16 +160,20 @@ export function createApp(options = {}) {
   });
 
   app.put("/api/admin/cases/:id", requireAuth(), (req, res) => {
+    const id = z.coerce.number().int().positive().parse(req.params.id);
     const data = caseSchema.parse(req.body);
-    db.prepare(`
+    const result = db.prepare(`
       UPDATE cases SET title=@title, type=@type, style=@style, area=@area, cover=@cover,
       summary=@summary, is_published=@is_published, updated_at=@updated_at WHERE id=@id
-    `).run({ ...data, id: req.params.id, is_published: data.is_published ? 1 : 0, updated_at: now() });
+    `).run({ ...data, id, is_published: data.is_published ? 1 : 0, updated_at: now() });
+    if (!result.changes) return res.status(404).json({ message: "案例不存在" });
     res.json({ ok: true });
   });
 
   app.delete("/api/admin/cases/:id", requireAuth(), (req, res) => {
-    db.prepare("DELETE FROM cases WHERE id = ?").run(req.params.id);
+    const id = z.coerce.number().int().positive().parse(req.params.id);
+    const result = db.prepare("DELETE FROM cases WHERE id = ?").run(id);
+    if (!result.changes) return res.status(404).json({ message: "案例不存在" });
     res.json({ ok: true });
   });
 
@@ -231,6 +242,7 @@ export function createApp(options = {}) {
 
   app.use((err, _req, res, _next) => {
     if (err instanceof z.ZodError) return res.status(400).json({ message: "参数错误", details: err.issues });
+    console.error(err);
     res.status(500).json({ message: "服务器错误" });
   });
 

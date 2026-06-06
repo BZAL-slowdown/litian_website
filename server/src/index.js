@@ -2,15 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import dotenv from "dotenv";
 import { createApp } from "./app.js";
+import { loadConfig } from "./config.js";
 
 dotenv.config();
 
-const databasePath = process.env.DATABASE_PATH || "./data/litian.sqlite";
-fs.mkdirSync(path.dirname(databasePath), { recursive: true });
+const config = loadConfig();
+fs.mkdirSync(path.dirname(config.DATABASE_PATH), { recursive: true });
 
 const app = createApp();
-const port = Number(process.env.PORT || 4000);
 
-app.listen(port, () => {
-  console.log(`Litian server listening on http://localhost:${port}`);
+app.listen(config.PORT, () => {
+  console.log(`Litian server listening on http://localhost:${config.PORT}`);
 });
