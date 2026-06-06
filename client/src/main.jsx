@@ -62,6 +62,35 @@ const NEWS_IMAGES = [
   "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/2b105f1be27c741d13d5fac425cec24d.jpg"
 ];
 
+const FOOTER_BG = "https://demoall2.5fa.cn/849/template/pc/skin/images/foot-bg.jpg";
+const QR_IMAGE = "https://demoall2.5fa.cn/849/uploads/allimg/20230608/1-23060P92305115.jpg";
+
+const PRODUCT_ITEMS = [
+  "产品名称九",
+  "产品名称八",
+  "产品名称七",
+  "产品名称六",
+  "产品名称五",
+  "产品名称四",
+  "产品名称三",
+  "产品名称二"
+];
+
+const TEAM_ITEMS = [
+  ["设计师-赵", "从事公共装饰装修、装饰材料、家具配套设计多年。"],
+  ["设计师-陈", "从事公共装饰装修、装饰材料、家具配套设计多年。"],
+  ["设计师-王", "从事公共装饰装修、装饰材料、家具配套设计多年。"],
+  ["设计师-李", "从事公共装饰装修、装饰材料、家具配套设计多年。"]
+];
+
+const CASE_ITEMS = ["展示五", "展示四", "展示三", "展示二"];
+
+const NEWS_ITEMS = [
+  ["客厅影视墙和卧室背景墙应该如何设计？", "电视背景墙应该是每家每户装修时都不会忽略的一环，毕竟每天晚饭后，一家人坐在电视前......"],
+  ["卧室、阳台多功能储物柜设计真实用 家装变", "卧室、阳台多功能储物柜对于我们的家庭来说真的很实用，它可以帮助我们收纳更多的东西......"],
+  ["掌握这些婚房装修小技巧 保证您的婚后生活", "有没有经历过选购了心仪的窗帘之后，买回家却发现安装不了，或者说是不合适的问题，在......"]
+];
+
 function useSite() {
   const [site, setSite] = useState({ pages: [], cases: [], notices: [] });
   const [loading, setLoading] = useState(true);
@@ -71,12 +100,12 @@ function useSite() {
   return { site, loading };
 }
 
-function Shell({ children }) {
+function Shell({ children, showSimpleFooter = true }) {
   const [open, setOpen] = useState(false);
   const nav = [
     ["网站首页", "Home", "/#home"],
     ["关于我们", "ABOUT US", "/#about"],
-    ["服务项目", "SERVICE", "/#product"],
+    ["产品中心", "PRODUCT", "/#product"],
     ["案例展示", "CASE", "/#case"],
     ["设计团队", "TEAMS", "/#teams"],
     ["新闻动态", "NEWS", "/#news"],
@@ -86,8 +115,7 @@ function Shell({ children }) {
     <>
       <header className="site-header">
         <Link className="brand" to="/">
-          <span>力天</span>
-          <small>空间设计</small>
+          <span>家居设计工作室</span>
         </Link>
         <button className="icon-button mobile-only" onClick={() => setOpen(!open)} aria-label="打开导航"><Menu size={20} /></button>
         <nav className={open ? "nav open" : "nav"}>
@@ -97,12 +125,11 @@ function Shell({ children }) {
               <small>{en}</small>
             </a>
           ))}
-          <NavLink to="/customer" onClick={() => setOpen(false)}>客户中心</NavLink>
           <NavLink to="/admin" onClick={() => setOpen(false)}>后台</NavLink>
         </nav>
       </header>
       <main>{children}</main>
-      <footer className="footer">
+      {showSimpleFooter && <footer className="footer">
         <div>
           <strong>深圳市力天创意工程有限公司</strong>
           <p>专注室内设计、全屋定制、住宅与商业空间设计。</p>
@@ -111,7 +138,7 @@ function Shell({ children }) {
           <span>+852 97904940</span>
           <span>深圳市福田区卓越世纪中心 4 号楼 501B</span>
         </div>
-      </footer>
+      </footer>}
     </>
   );
 }
@@ -127,15 +154,14 @@ function HomePage() {
   if (loading) return <Loading />;
   const about = site.pages.find((p) => p.slug === "about");
   const services = site.pages.filter((p) => ["residential-design", "commercial-design", "custom-furniture", "process"].includes(p.slug));
-  const productCategories = ["住宅空间设计", "商业空间设计", "全屋家具定制", "服务流程", "合作资质"];
-  const teamNames = ["主案设计师", "软装设计师", "商业空间顾问", "全屋定制顾问", "项目监管设计师"];
+  const productCategories = ["产品分类一", "产品分类二", "产品分类三", "产品分类四", "产品分类五"];
   const news = [
-    site.notices[0] || { title: "力天空间设计官网内容管理系统上线", body: "官网已支持页面内容、公告、案例与预约数据后台管理。", updated_at: "2026-06-06" },
-    site.notices[1] || { title: "内地服务模式说明", body: "力天坚持设计与施工分离，施工由持有二级资质的合作企业执行。", updated_at: "2026-06-06" },
-    site.notices[2] || { title: "在线预约通道开放", body: "客户可通过官网提交住宅或商业空间设计咨询预约。", updated_at: "2026-06-06" }
+    site.notices[0] || { title: NEWS_ITEMS[0][0], body: NEWS_ITEMS[0][1], updated_at: "2018-08-21" },
+    site.notices[1] || { title: NEWS_ITEMS[1][0], body: NEWS_ITEMS[1][1], updated_at: "2018-08-21" },
+    site.notices[2] || { title: NEWS_ITEMS[2][0], body: NEWS_ITEMS[2][1], updated_at: "2018-08-21" }
   ];
   return (
-    <Shell>
+    <Shell showSimpleFooter={false}>
       <section id="home" className="template-hero">
         {BANNERS.map((image, index) => (
           <div
@@ -150,59 +176,69 @@ function HomePage() {
           {BANNERS.map((_, index) => <button className={index === slide ? "active" : ""} key={index} onClick={() => setSlide(index)} aria-label={`切换到第 ${index + 1} 张`} />)}
         </div>
       </section>
-      <section id="product" className="template-section muted">
-        <SectionTitle zh="服务项目" en="SERVICE" />
+      <section id="product" className="template-section product-section">
+        <SectionTitle zh="产品中心" en="PRODUCT" />
         <div className="category-tabs">
           {productCategories.map((name, index) => (
             <button className={cat === index ? "active" : ""} key={name} onClick={() => setCat(index)}>{name}</button>
           ))}
         </div>
         <div className="product-grid">
-          {services.concat(services).slice(0, 8).map((item, index) => (
-            <Link className="product-card" to={`/pages/${item.slug}`} key={`${item.slug}-${index}`}>
-              <img src={PRODUCT_IMAGES[index % PRODUCT_IMAGES.length]} alt={item.title} loading="lazy" />
-              <span>{item.title}</span>
+          {PRODUCT_ITEMS.map((name, index) => (
+            <Link className="product-card" to={`/pages/${services[index % services.length]?.slug || "residential-design"}`} key={name}>
+              <img src={PRODUCT_IMAGES[index]} alt={name} loading="lazy" />
+              <span />
+              <p>{name}</p>
             </Link>
           ))}
         </div>
       </section>
-      <section id="about" className="template-section">
-        <SectionTitle zh="力天空间设计" en="ABOUT US" />
-        <div className="about-layout">
-          <div className="about-images">
-            {ABOUT_IMAGES.map((image) => <img src={image} alt="力天空间设计" key={image} loading="lazy" />)}
-          </div>
-          <div className="about-copy">
-            <p>{about?.summary}</p>
-            {(about?.sections || []).slice(0, 3).map((section) => <p key={section.heading}>{section.body}</p>)}
-            <Link className="outline-more" to="/pages/about">+ MORE +</Link>
+      <section id="about" className="about-template">
+        <div className="about-image-panel">
+          <img src={ABOUT_IMAGES[1]} alt="公司简介" loading="lazy" />
+          <div className="about-switch">
+            <button aria-label="上一张">‹</button>
+            <button aria-label="下一张">›</button>
           </div>
         </div>
-      </section>
-      <section id="teams" className="template-section muted">
-        <SectionTitle zh="设计团队" en="TEAMS" />
-        <div className="team-grid">
-          {teamNames.map((name, index) => (
-            <article className="team-card" key={name}>
-              <img src={TEAM_IMAGES[index]} alt={name} loading="lazy" />
-              <h3>{name}</h3>
-              <p>专注空间美学、定制设计与落地监管。</p>
-            </article>
-          ))}
+        <div className="about-copy">
+          <h2>家居设计工作室网站模板</h2>
+          <p>{about?.summary || "核心价值观：诚信、创新、服务。企业精神：团结拼搏、开拓求实、满足用户、科技进步。"}</p>
+          {(about?.sections || []).slice(0, 2).map((section) => <p key={section.heading}>{section.body}</p>)}
+          <p>我们坚持用专业化服务与扎实执行，为客户提供高质量空间设计方案，并把每一次合作建立在客户满意的基础上。</p>
+          <Link className="outline-more" to="/pages/about">+MORE+</Link>
         </div>
       </section>
-      <section id="case" className="template-section">
+      <section id="teams" className="team-template" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.72)), url(${BANNERS[0]})` }}>
+        <SectionTitle zh="设计团队" en="TEAMS" dark />
+        <div className="team-stage">
+          <button className="team-arrow left" aria-label="上一组">‹</button>
+          <div className="team-grid">
+            {TEAM_ITEMS.map(([name, desc], index) => (
+              <article className="team-card" key={name}>
+                <img src={TEAM_IMAGES[index]} alt={name} loading="lazy" />
+                <div>
+                  <h3>{name}</h3>
+                  <p>{desc}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <button className="team-arrow right" aria-label="下一组">›</button>
+        </div>
+      </section>
+      <section id="case" className="case-template">
         <SectionTitle zh="案例展示" en="CASE" />
-        <div className="showcase-grid">
-          {site.cases.slice(0, 5).map((item, index) => (
-            <article className={index === 0 ? "showcase-card large" : "showcase-card"} key={item.id}>
-              <img src={CASE_IMAGES[index % CASE_IMAGES.length]} alt={item.title} loading="lazy" />
-              <div><span>{item.type} / {item.style}</span><h3>{item.title}</h3></div>
+        <div className="showcase-row">
+          {CASE_ITEMS.map((name, index) => (
+            <article className="showcase-card" key={name}>
+              <img src={site.cases[index]?.cover || CASE_IMAGES[index]} alt={site.cases[index]?.title || name} loading="lazy" />
+              <div><h3>{site.cases[index]?.title || name}</h3></div>
             </article>
           ))}
         </div>
       </section>
-      <section id="news" className="template-section muted">
+      <section id="news" className="news-template">
         <SectionTitle zh="新闻动态" en="NEWS" />
         <div className="news-grid">
           {news.map((item, index) => (
@@ -210,32 +246,37 @@ function HomePage() {
               <img src={NEWS_IMAGES[index]} alt={item.title} loading="lazy" />
               <div>
                 <h3>{item.title}</h3>
-                <time>{item.updated_at?.slice(0, 10) || "2026-06-06"}</time>
+                <time>{item.updated_at?.slice(0, 10) || "2018-08-21"}</time>
                 <p>{item.body}</p>
+                <Link to="/pages/about" aria-label="查看新闻">→</Link>
               </div>
             </article>
           ))}
         </div>
       </section>
-      <section id="contact" className="template-footer">
-        <div className="footer-columns">
-          <div>
-            <h3>联系我们</h3>
-            <p>深圳市力天创意工程有限公司</p>
-            <p>咨询电话：+852 97904940</p>
-            <p>地址：深圳市福田区卓越世纪中心 4 号楼 501B</p>
+      <section id="contact" className="template-footer" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,.82), rgba(0,0,0,.82)), url(${FOOTER_BG})` }}>
+        <div className="footer-inner">
+          <div className="footer-main">
+            <nav>
+              <a href="#home">网站首页</a>
+              <a href="#about">关于我们</a>
+              <a href="#product">产品中心</a>
+              <a href="#case">案例展示</a>
+              <a href="#teams">设计团队</a>
+              <a href="#news">新闻动态</a>
+              <a href="#contact">联系我们</a>
+              <Link to="/admin">后台管理</Link>
+            </nav>
+            <div className="footer-contact">
+              <p>联系地址：深圳市福田区卓越世纪中心 4 号楼 501B</p>
+              <p>联系电话：+852 97904940</p>
+              <p>E-mail：admin@qq.com</p>
+              <p>服务热线：13800000000</p>
+            </div>
           </div>
-          <div>
-            <h3>快速导航</h3>
-            <a href="#about">关于我们</a>
-            <a href="#product">服务项目</a>
-            <a href="#case">案例展示</a>
-            <Link to="/admin">后台管理</Link>
-          </div>
-          <div>
-            <h3>在线咨询</h3>
-            <p>免费获取专属设计方案，1 个工作日内主动联系。</p>
-            <Link className="footer-cta" to="/pages/appointment">立即预约 <ArrowRight size={16} /></Link>
+          <div className="qr-card">
+            <img src={QR_IMAGE} alt="关注我们" />
+            <p>扫一扫，关注我们</p>
           </div>
         </div>
         <div className="copyright">Copyright © 2012-{new Date().getFullYear()} 力天空间设计 版权所有</div>
@@ -244,9 +285,9 @@ function HomePage() {
   );
 }
 
-function SectionTitle({ zh, en }) {
+function SectionTitle({ zh, en, dark = false }) {
   return (
-    <div className="template-title">
+    <div className={dark ? "template-title dark" : "template-title"}>
       <div>
         <span />
         <h2>{zh}</h2>
