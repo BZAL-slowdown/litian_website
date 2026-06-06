@@ -13,14 +13,54 @@ import {
   Phone,
   Save,
   ShieldCheck,
-  Sparkles,
   UserPlus,
   Users
 } from "lucide-react";
 import { api } from "./api";
 import "./styles.css";
 
-const heroImage = "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=82";
+const BANNERS = [
+  "https://demoall2.5fa.cn/849/public/upload/other/2018/08/23/d90465bd6aacf7163074a82880f12c78.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/other/2018/08/23/1b9777a0ad8a52a71d4202f5f47f2fb4.png"
+];
+
+const PRODUCT_IMAGES = [
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/362eb29c769a210f405bd6d30082d336.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/ea8f3fb96c7afb0f0bad0895ac31ba2b.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/b3c865b3d2f95e3a0e06892b09485686.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/0239229e472453dcb6e193c38260ff0a.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/9735ed2d4cea968f5578d3cbdf5bca35.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/30f943e0ae55cf48b4c0482ea48ece58.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/8764f281f738be9bdb6671c2bf868e2d.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/2280ef172d06e6bc8aa28aaacf20dd1a.jpg"
+];
+
+const ABOUT_IMAGES = [
+  "https://demoall2.5fa.cn/849/public/upload/other/2018/08/23/f19be075d5b9906e351e98add50edeec.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/other/2018/08/23/67bd1b5f8c9d756416c51b508446a5ba.jpg"
+];
+
+const TEAM_IMAGES = [
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/b9c630e0420384590f4f335a065dccb1.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/a3bd32dda4ea7aad63f6b81de7810c6f.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/c567ed953904f24b7d04a9f91e72ba68.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/38dac1d71c6b38e796e8acf273164fa2.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/514b7d67602cdd909c09f10421d273a4.jpg"
+];
+
+const CASE_IMAGES = [
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/022318a803e6fe5d9ab644818abfb354.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/e18552c13963e6995d472690eb4b2a16.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/06d09e966ce1e5109e1c66ae3f2c7a1f.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/af84853ca0fea1cf1f89c95d899b0595.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/3d53fb7ac82201cefbe274d07770941d.jpg"
+];
+
+const NEWS_IMAGES = [
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/57649cc97b9f2194c1403d86d106411f.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/2f59d45c3a8895e5007cb70d0aef354b.jpg",
+  "https://demoall2.5fa.cn/849/public/upload/article/2018/08/23/2b105f1be27c741d13d5fac425cec24d.jpg"
+];
 
 function useSite() {
   const [site, setSite] = useState({ pages: [], cases: [], notices: [] });
@@ -32,9 +72,16 @@ function useSite() {
 }
 
 function Shell({ children }) {
-  const { site } = useSite();
   const [open, setOpen] = useState(false);
-  const nav = site.pages.filter((p) => ["home", "about", "residential-design", "commercial-design", "residential-cases", "appointment", "contact"].includes(p.slug));
+  const nav = [
+    ["网站首页", "Home", "/#home"],
+    ["关于我们", "ABOUT US", "/#about"],
+    ["服务项目", "SERVICE", "/#product"],
+    ["案例展示", "CASE", "/#case"],
+    ["设计团队", "TEAMS", "/#teams"],
+    ["新闻动态", "NEWS", "/#news"],
+    ["联系我们", "CONTACT", "/#contact"]
+  ];
   return (
     <>
       <header className="site-header">
@@ -44,13 +91,14 @@ function Shell({ children }) {
         </Link>
         <button className="icon-button mobile-only" onClick={() => setOpen(!open)} aria-label="打开导航"><Menu size={20} /></button>
         <nav className={open ? "nav open" : "nav"}>
-          {nav.map((item) => (
-            <NavLink key={item.slug} to={item.slug === "home" ? "/" : `/pages/${item.slug}`} onClick={() => setOpen(false)}>
-              {item.title.replace("空间设计", "")}
-            </NavLink>
+          {nav.map(([zh, en, href]) => (
+            <a key={zh} href={href} onClick={() => setOpen(false)}>
+              <strong>{zh}</strong>
+              <small>{en}</small>
+            </a>
           ))}
-          <NavLink to="/customer">客户中心</NavLink>
-          <NavLink to="/admin">后台</NavLink>
+          <NavLink to="/customer" onClick={() => setOpen(false)}>客户中心</NavLink>
+          <NavLink to="/admin" onClick={() => setOpen(false)}>后台</NavLink>
         </nav>
       </header>
       <main>{children}</main>
@@ -70,65 +118,142 @@ function Shell({ children }) {
 
 function HomePage() {
   const { site, loading } = useSite();
+  const [slide, setSlide] = useState(0);
+  const [cat, setCat] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setSlide((value) => (value + 1) % BANNERS.length), 5000);
+    return () => clearInterval(timer);
+  }, []);
   if (loading) return <Loading />;
-  const home = site.pages.find((p) => p.slug === "home");
-  const services = site.pages.filter((p) => ["residential-design", "commercial-design", "custom-furniture"].includes(p.slug));
-  const stats = [
-    ["20+", "内容栏目"],
-    ["1:1", "落地监管"],
-    ["2级", "合作施工资质"],
-    ["1日", "预约响应"]
+  const about = site.pages.find((p) => p.slug === "about");
+  const services = site.pages.filter((p) => ["residential-design", "commercial-design", "custom-furniture", "process"].includes(p.slug));
+  const productCategories = ["住宅空间设计", "商业空间设计", "全屋家具定制", "服务流程", "合作资质"];
+  const teamNames = ["主案设计师", "软装设计师", "商业空间顾问", "全屋定制顾问", "项目监管设计师"];
+  const news = [
+    site.notices[0] || { title: "力天空间设计官网内容管理系统上线", body: "官网已支持页面内容、公告、案例与预约数据后台管理。", updated_at: "2026-06-06" },
+    site.notices[1] || { title: "内地服务模式说明", body: "力天坚持设计与施工分离，施工由持有二级资质的合作企业执行。", updated_at: "2026-06-06" },
+    site.notices[2] || { title: "在线预约通道开放", body: "客户可通过官网提交住宅或商业空间设计咨询预约。", updated_at: "2026-06-06" }
   ];
   return (
     <Shell>
-      <section className="hero" style={{ backgroundImage: `linear-gradient(90deg, rgba(19, 31, 32, .76), rgba(19,31,32,.22)), url(${heroImage})` }}>
-        <div className="hero-content">
-          <p className="eyebrow">室内设计 | 全屋定制 | 住宅商业空间</p>
-          <h1>{home?.title} | {home?.subtitle}</h1>
-          <p>{home?.summary}</p>
-          <div className="actions">
-            <Link className="primary" to="/pages/appointment">预约设计咨询 <ArrowRight size={18} /></Link>
-            <Link className="secondary" to="/pages/process">查看服务流程</Link>
-          </div>
+      <section id="home" className="template-hero">
+        {BANNERS.map((image, index) => (
+          <div
+            className={index === slide ? "template-hero-slide active" : "template-hero-slide"}
+            key={image}
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        ))}
+        <button className="hero-arrow left" onClick={() => setSlide((slide - 1 + BANNERS.length) % BANNERS.length)} aria-label="上一张">‹</button>
+        <button className="hero-arrow right" onClick={() => setSlide((slide + 1) % BANNERS.length)} aria-label="下一张">›</button>
+        <div className="hero-dots">
+          {BANNERS.map((_, index) => <button className={index === slide ? "active" : ""} key={index} onClick={() => setSlide(index)} aria-label={`切换到第 ${index + 1} 张`} />)}
         </div>
       </section>
-      <section className="stat-band">
-        {stats.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}
-      </section>
-      <section className="section">
-        <div className="section-title">
-          <p className="eyebrow">Service</p>
-          <h2>设计从灵感开始，也要稳稳落地</h2>
+      <section id="product" className="template-section muted">
+        <SectionTitle zh="服务项目" en="SERVICE" />
+        <div className="category-tabs">
+          {productCategories.map((name, index) => (
+            <button className={cat === index ? "active" : ""} key={name} onClick={() => setCat(index)}>{name}</button>
+          ))}
         </div>
-        <div className="service-grid">
-          {services.map((item) => (
-            <Link className="service-card" to={`/pages/${item.slug}`} key={item.slug}>
-              <Sparkles size={24} />
-              <h3>{item.title}</h3>
-              <p>{item.summary}</p>
+        <div className="product-grid">
+          {services.concat(services).slice(0, 8).map((item, index) => (
+            <Link className="product-card" to={`/pages/${item.slug}`} key={`${item.slug}-${index}`}>
+              <img src={PRODUCT_IMAGES[index % PRODUCT_IMAGES.length]} alt={item.title} loading="lazy" />
+              <span>{item.title}</span>
             </Link>
           ))}
         </div>
       </section>
-      <section className="split-section">
-        <div>
-          <p className="eyebrow">Cases</p>
-          <h2>住宅与商业空间案例</h2>
-          <p>后台可维护案例图片、风格、面积与说明。当前已放入适合上线前演示的设计空间素材。</p>
-          <Link className="text-link" to="/pages/residential-cases">浏览案例 <ArrowRight size={16} /></Link>
+      <section id="about" className="template-section">
+        <SectionTitle zh="力天空间设计" en="ABOUT US" />
+        <div className="about-layout">
+          <div className="about-images">
+            {ABOUT_IMAGES.map((image) => <img src={image} alt="力天空间设计" key={image} loading="lazy" />)}
+          </div>
+          <div className="about-copy">
+            <p>{about?.summary}</p>
+            {(about?.sections || []).slice(0, 3).map((section) => <p key={section.heading}>{section.body}</p>)}
+            <Link className="outline-more" to="/pages/about">+ MORE +</Link>
+          </div>
         </div>
-        <CaseGrid cases={site.cases.slice(0, 4)} />
       </section>
-      <section className="notice-band">
-        {site.notices.slice(0, 3).map((notice) => (
-          <article key={notice.id}>
-            <ClipboardList size={18} />
-            <h3>{notice.title}</h3>
-            <p>{notice.body}</p>
-          </article>
-        ))}
+      <section id="teams" className="template-section muted">
+        <SectionTitle zh="设计团队" en="TEAMS" />
+        <div className="team-grid">
+          {teamNames.map((name, index) => (
+            <article className="team-card" key={name}>
+              <img src={TEAM_IMAGES[index]} alt={name} loading="lazy" />
+              <h3>{name}</h3>
+              <p>专注空间美学、定制设计与落地监管。</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section id="case" className="template-section">
+        <SectionTitle zh="案例展示" en="CASE" />
+        <div className="showcase-grid">
+          {site.cases.slice(0, 5).map((item, index) => (
+            <article className={index === 0 ? "showcase-card large" : "showcase-card"} key={item.id}>
+              <img src={CASE_IMAGES[index % CASE_IMAGES.length]} alt={item.title} loading="lazy" />
+              <div><span>{item.type} / {item.style}</span><h3>{item.title}</h3></div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section id="news" className="template-section muted">
+        <SectionTitle zh="新闻动态" en="NEWS" />
+        <div className="news-grid">
+          {news.map((item, index) => (
+            <article className="news-card" key={item.title}>
+              <img src={NEWS_IMAGES[index]} alt={item.title} loading="lazy" />
+              <div>
+                <h3>{item.title}</h3>
+                <time>{item.updated_at?.slice(0, 10) || "2026-06-06"}</time>
+                <p>{item.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section id="contact" className="template-footer">
+        <div className="footer-columns">
+          <div>
+            <h3>联系我们</h3>
+            <p>深圳市力天创意工程有限公司</p>
+            <p>咨询电话：+852 97904940</p>
+            <p>地址：深圳市福田区卓越世纪中心 4 号楼 501B</p>
+          </div>
+          <div>
+            <h3>快速导航</h3>
+            <a href="#about">关于我们</a>
+            <a href="#product">服务项目</a>
+            <a href="#case">案例展示</a>
+            <Link to="/admin">后台管理</Link>
+          </div>
+          <div>
+            <h3>在线咨询</h3>
+            <p>免费获取专属设计方案，1 个工作日内主动联系。</p>
+            <Link className="footer-cta" to="/pages/appointment">立即预约 <ArrowRight size={16} /></Link>
+          </div>
+        </div>
+        <div className="copyright">Copyright © 2012-{new Date().getFullYear()} 力天空间设计 版权所有</div>
       </section>
     </Shell>
+  );
+}
+
+function SectionTitle({ zh, en }) {
+  return (
+    <div className="template-title">
+      <div>
+        <span />
+        <h2>{zh}</h2>
+        <span />
+      </div>
+      <p>{en}</p>
+    </div>
   );
 }
 
