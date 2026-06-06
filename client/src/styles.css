@@ -273,6 +273,14 @@ select {
   gap: 20px;
   max-width: 1180px;
   margin: 0 auto;
+  opacity: 0;
+  transform: translateY(92px);
+  transition: opacity 900ms ease, transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.product-grid.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .product-card {
@@ -280,16 +288,7 @@ select {
   overflow: hidden;
   background: transparent;
   border: 3px solid transparent;
-  outline: 0 solid transparent;
-  opacity: 0;
-  transform: translateY(54px);
-  transition: opacity 720ms ease, transform 720ms ease, border-color 220ms ease;
-  transition-delay: var(--delay, 0ms);
-}
-
-.product-card.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+  transition: border-color 180ms ease;
 }
 
 .product-card:hover {
@@ -326,20 +325,20 @@ select {
   position: absolute;
   left: 0;
   right: 0;
-  height: 50%;
-  background: rgba(0, 0, 0, 0.72);
+  height: calc(50% - 31px);
+  background: rgba(0, 0, 0, 0.76);
   opacity: 0;
-  transition: transform 360ms ease, opacity 260ms ease;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease;
 }
 
 .product-card .product-shade::before {
   top: 0;
-  transform: translateY(-100%);
+  transform: translateY(-112%);
 }
 
 .product-card .product-shade::after {
-  bottom: 0;
-  transform: translateY(100%);
+  bottom: 62px;
+  transform: translateY(112%);
 }
 
 .product-card:hover .product-shade::before,
@@ -351,13 +350,13 @@ select {
 .product-card i {
   position: absolute;
   left: 50%;
-  top: 44%;
+  top: calc(50% - 31px);
   z-index: 2;
   width: 36px;
   height: 36px;
   opacity: 0;
-  transform: translate(-50%, -88px) rotate(-45deg);
-  transition: opacity 260ms ease, transform 430ms ease;
+  transform: translate(-50%, -120px) rotate(-45deg);
+  transition: opacity 240ms ease 80ms, transform 460ms cubic-bezier(0.22, 1, 0.36, 1) 60ms;
 }
 
 .product-card i::before,
@@ -393,12 +392,13 @@ select {
   z-index: 3;
   margin: 0;
   padding: 18px 12px;
+  min-height: 62px;
   color: #ffffff;
   text-align: center;
   background: var(--primary);
   opacity: 0;
   transform: translateY(100%);
-  transition: opacity 260ms ease, transform 360ms ease;
+  transition: opacity 180ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .product-card:hover p {
@@ -415,6 +415,11 @@ select {
   }
 
   .product-card {
+    opacity: 1;
+    transform: none;
+  }
+
+  .product-grid {
     opacity: 1;
     transform: none;
   }

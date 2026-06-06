@@ -152,7 +152,7 @@ function HomePage() {
     return () => clearInterval(timer);
   }, []);
   useEffect(() => {
-    const items = document.querySelectorAll(".reveal-product");
+    const items = document.querySelectorAll(".reveal-product-grid");
     if (!("IntersectionObserver" in window)) {
       items.forEach((item) => item.classList.add("is-visible"));
       return undefined;
@@ -203,9 +203,9 @@ function HomePage() {
             <button className={cat === index ? "active" : ""} key={name} onClick={() => setCat(index)}>{name}</button>
           ))}
         </div>
-        <div className="product-grid">
+        <div className="product-grid reveal-product-grid">
           {PRODUCT_ITEMS.map((name, index) => (
-            <Link className="product-card reveal-product" style={{ "--delay": `${index * 90}ms` }} to={`/pages/${services[index % services.length]?.slug || "residential-design"}`} key={name}>
+            <Link className="product-card" to={`/pages/${services[index % services.length]?.slug || "residential-design"}`} key={name}>
               <img src={PRODUCT_IMAGES[index]} alt={name} loading="lazy" />
               <span className="product-shade" />
               <i aria-hidden="true" />
