@@ -151,6 +151,26 @@ function HomePage() {
     const timer = setInterval(() => setSlide((value) => (value + 1) % BANNERS.length), 5000);
     return () => clearInterval(timer);
   }, []);
+  useEffect(() => {
+    const items = document.querySelectorAll(".reveal-product");
+    if (!("IntersectionObserver" in window)) {
+      items.forEach((item) => item.classList.add("is-visible"));
+      return undefined;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.18 }
+    );
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
   if (loading) return <Loading />;
   const about = site.pages.find((p) => p.slug === "about");
   const services = site.pages.filter((p) => ["residential-design", "commercial-design", "custom-furniture", "process"].includes(p.slug));
@@ -185,9 +205,10 @@ function HomePage() {
         </div>
         <div className="product-grid">
           {PRODUCT_ITEMS.map((name, index) => (
-            <Link className="product-card" to={`/pages/${services[index % services.length]?.slug || "residential-design"}`} key={name}>
+            <Link className="product-card reveal-product" style={{ "--delay": `${index * 90}ms` }} to={`/pages/${services[index % services.length]?.slug || "residential-design"}`} key={name}>
               <img src={PRODUCT_IMAGES[index]} alt={name} loading="lazy" />
-              <span />
+              <span className="product-shade" />
+              <i aria-hidden="true" />
               <p>{name}</p>
             </Link>
           ))}
